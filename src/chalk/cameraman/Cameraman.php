@@ -9,7 +9,6 @@ namespace chalk\cameraman;
 
 use chalk\cameraman\movement\Movement;
 use chalk\cameraman\movement\StraightMovement;
-use chalk\cameraman\task\CountdownTask;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\Listener;
@@ -26,6 +25,7 @@ class Cameraman extends PluginBase implements Listener {
     private static $instance = null;
 
     const TICKS_PER_SECOND = 10;
+	const DELAY = 100;
 
     /** @var Location[][] */
     private $waypointMap = [];
@@ -411,13 +411,5 @@ class Cameraman extends PluginBase implements Listener {
         $packet->onGround = false;
 
         return $player->dataPacket($packet);
-    }
-
-    public function scheduleCountdownTask(CountdownTask $task, $period = 20){
-        $this->getServer()->getScheduler()->scheduleRepeatingTask($task, $period);
-    }
-
-    public function cancelCountdownTask(CountdownTask $task){
-        $this->getServer()->getScheduler()->cancelTask($task->getTaskId());
     }
 }
