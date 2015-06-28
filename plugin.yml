@@ -7,7 +7,7 @@ website: http://chalk.pe
 
 permissions:
   cameraman.use:
-    description: Allows player to use all features of Cameraman
+    description: Allows a player to use all features of Cameraman
     default: true
 
 commands:
