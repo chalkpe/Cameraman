@@ -7,14 +7,14 @@ Cameraman is an automatic motion control plugin for PocketMine-MP, which allows 
 ## Commands
 | Command | Parameters | Description | Shortcut |
 | :-------: | :-------: | :-------: | :-------: |
-| `/cam p` | `[index]` | `Adds a waypoint at the current position` | `/p` |
-| `/cam start` | `<slowness>` | `Travels the path in the given slowness` | |
-| `/cam stop` | | `Interrupts travelling` | |
-| `/cam info` | `[index]` | `Shows the information of current waypoints` | |
-| `/cam goto` | `<index>` | `Teleports to the specified waypoint` | |
-| `/cam clear` | `[index]` | `Removes all or specific waypoints` | |
-| `/cam help` | `[command]` | `Shows the help menu of commands` | |
-| `/cam about` | | `Shows the information of this plugin` | |
+| `/cam p` | `[index]` | Adds a waypoint at the current position | `/p` |
+| `/cam start` | `<slowness>` | Travels the path in the given slowness | |
+| `/cam stop` | | Interrupts travelling | |
+| `/cam info` | `[index]` | Shows the information of current waypoints | |
+| `/cam goto` | `<index>` | Teleports to the specified waypoint | |
+| `/cam clear` | `[index]` | Removes all or specific waypoints | |
+| `/cam help` | `[command]` | Shows the help menu of commands | |
+| `/cam about` | | Shows the information of this plugin | |
 
 ## License
 ```
