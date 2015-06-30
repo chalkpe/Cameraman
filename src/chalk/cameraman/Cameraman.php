@@ -12,6 +12,7 @@ use chalk\cameraman\movement\StraightMovement;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\level\Location;
 use pocketmine\math\Vector3;
@@ -412,4 +413,10 @@ class Cameraman extends PluginBase implements Listener {
 
         return $player->dataPacket($packet);
     }
+
+	public function onPlayerQuit(PlayerQuitEvent $event){
+		if(($camera = $this->getCamera($event->getPlayer())) !== null and $camera->isRunning()){
+			$camera->stop();
+		}
+	}
 }
