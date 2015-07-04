@@ -9,6 +9,7 @@ namespace chalk\cameraman;
 
 use chalk\cameraman\movement\Movement;
 use chalk\cameraman\movement\StraightMovement;
+use chalk\utils\Messages;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\Listener;
@@ -19,11 +20,16 @@ use pocketmine\math\Vector3;
 use pocketmine\network\protocol\MovePlayerPacket;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
+use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
 class Cameraman extends PluginBase implements Listener {
     /** @var Cameraman */
     private static $instance = null;
+
+    /** @var Messages */
+    private $messages = null;
+    const MESSAGE_VERSION = 1;
 
     const TICKS_PER_SECOND = 10;
 	const DELAY = 100;
@@ -46,7 +52,34 @@ class Cameraman extends PluginBase implements Listener {
     }
 
     public function onEnable(){
+        @mkdir($this->getDataFolder());
+        $this->initMessages();
+
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
+    }
+
+    public function initMessages(){
+        $this->updateMessages("messages.yml");
+        $this->messages = new Messages((new Config($this->getDataFolder() . "messages.yml", Config::YAML))->getAll());
+    }
+
+    /**
+     * @param string $filename
+     */
+    public function updateMessages($filename = "messages.yml"){
+        $this->saveResource($filename, false);
+
+        $messages = (new Config($this->getDataFolder() . $filename, Config::YAML))->getAll();
+        if(!isset($messages["version"]) or $messages["version"] < self::MESSAGE_VERSION){
+            $this->saveResource($filename, true);
+        }
+    }
+
+    /**
+     * @return Messages
+     */
+    public function getMessages(){
+        return $this->messages;
     }
 
     /**
