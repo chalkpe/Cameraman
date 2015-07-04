@@ -1,2 +1,111 @@
 version: 1
 default-language: "eng"
+
+messages:
+  command-p-usage:
+    eng: "/cam p [index]"
+    kor: "/cam p [번호]"
+
+  command-p-description:
+    eng: "Adds a waypoint at the current position"
+    kor: "현재 위치를 웨이포인트로 추가합니다"
+
+  command-start-usage:
+    eng: "/cam start <slowness>"
+    kor: "/cam start <느린 정도>"
+
+  command-start-description:
+    eng: "Travels the path in the given slowness"
+    kor: "주어진 느린 정도로 경로를 여행합니다"
+
+  command-stop-usage:
+    eng: "/cam stop"
+    kor: "/cam stop"
+
+  command-stop-description:
+    eng: "Interrupts travelling"
+    kor: "여행을 정지합니다"
+
+  command-info-usage:
+    eng: "/cam info [index]"
+    kor: "/can info [번호]"
+
+  command-info-description:
+    eng: "Shows the information of current waypoints"
+    kor: "해당 웨이포인트의 정보를 보여드립니다"
+
+  command-goto-usage:
+    eng: "/cam goto <index>"
+    kor: "/cam goto <번호>"
+
+  command-goto-description:
+    eng: "Teleports to the specified waypoint"
+    kor: "특정 웨이포인트로 순간이동합니다"
+
+  command-clear-usage:
+    eng: "/cam clear [index]"
+    kor: "/cam clear [번호]"
+
+  command-clear-description:
+    eng: "Removes all or specific waypoints"
+    kor: "모든 웨이포인트나 특정 웨이포인트를 제거합니다"
+
+  command-help-usage:
+    eng: "/cam help [command]"
+    kor: "/cam help [명령어]"
+
+  command-help-description:
+    eng: "Shows the help menu of commands"
+    kor: "명령어 도움말 메뉴를 보여드립니다"
+
+  command-about-usage:
+    eng: "/cam about"
+    kor: "/cam about"
+
+  command-about-description:
+    eng: "Shows the information of this plugin"
+    kor: "이 플러그인의 정보를 보여드립니다"
+
+  message-help:
+    eng: "-- Showing help page {%current} of {%total} (/cam help [page]) --"
+    kor: "-- 총 {%total}개 페이지 중 {%current}번째 페이지 (/cam help [page]) --"
+
+  error-unknown-command-0:
+    eng: "Unknown command!"
+    kor: "알 수 없는 명령어입니다!"
+
+  error-unknown-command-1:
+    eng: "Try §l/cam help§r§c for a list of commands"
+    kor: "§l/cam help§r§c을 입력해 명령어 목록을 확인해 보세요"
+
+  error-only-in-game:
+    eng: "Please issue this command in-game!"
+    kor: "게임 내에서 명령어를 사용해 주세요!"
+
+  error-index-out-of-bounds:
+    eng: "The index is out of bounds! (total: {%total})"
+    kor: "범위 밖의 번호입니다! (총 {%total}개)"
+
+  error-too-few-waypoints:
+    eng: "You should set at least two waypoints!"
+    kor: "적어도 두 개 이상의 웨이포인트를 설정해야 합니다!"
+
+  error-negative-slowness:
+    eng: "The slowness must be positive! (current: {%slowness})"
+    kor: "느린 정도는 양수여야 합니다! (현재: {%slowness}"
+
+  error-travels-already-interrupted:
+    eng: "Travels are already interrupted!"
+    kor: "여행은 이미 중지되었습니다!"
+
+  error-no-waypoints-to-show:
+    eng: "There are no waypoints to show!"
+    kor: "보여드릴 웨이포인트가 하나도 없습니다!"
+
+  error-no-waypoints-to-teleport:
+    eng: "There are no waypoints to teleport!"
+    kor: "순간이동할 웨이포인트가 하나도 없습니다!"
+
+  error-no-waypoints-to-remove:
+    eng: "There are no waypoints to remove!"
+    kor: "제거할 웨이포인트가 하나도 없습니다!"
