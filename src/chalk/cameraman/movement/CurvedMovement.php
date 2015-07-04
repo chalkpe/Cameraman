@@ -10,24 +10,24 @@ namespace chalk\cameraman\movement;
 use pocketmine\level\Location;
 
 class CurvedMovement extends StraightMovement {
-	/**
-	 * @param Location $origin
-	 * @param Location $destination
-	 */
-	public function __construct(Location $origin, Location $destination){
-		parent::__construct($origin, $destination);
-	}
+    /**
+     * @param Location $origin
+     * @param Location $destination
+     */
+    public function __construct(Location $origin, Location $destination){
+        parent::__construct($origin, $destination);
+    }
 
-	/**
-	 * @param number $slowness
-	 * @param float $curve
-	 * @return Location|null
-	 */
-	public function tick($slowness, $curve = 5.0){
-		if(($location = parent::tick($slowness)) !== null){
-			$offset = $curve * sin(M_PI * ($this->current / ($this->length * $slowness)));
-			$location->setComponents($location->getX() + $offset, $location->getY(), $location->getZ() + $offset);
-		}
-		return $location;
-	}
+    /**
+     * @param number $slowness
+     * @param float $curve
+     * @return Location|null
+     */
+    public function tick($slowness, $curve = 5.0){
+        if(($location = parent::tick($slowness)) !== null){
+            $offset = $curve * sin(M_PI * ($this->current / ($this->length * $slowness)));
+            $location->setComponents($location->getX() + $offset, $location->getY(), $location->getZ() + $offset);
+        }
+        return $location;
+    }
 }

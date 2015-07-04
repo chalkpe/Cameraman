@@ -32,7 +32,7 @@ class Cameraman extends PluginBase implements Listener {
     const MESSAGE_VERSION = 1;
 
     const TICKS_PER_SECOND = 10;
-	const DELAY = 100;
+    const DELAY = 100;
 
     /** @var Location[][] */
     private $waypointMap = [];
@@ -447,9 +447,9 @@ class Cameraman extends PluginBase implements Listener {
         return $player->dataPacket($packet);
     }
 
-	public function onPlayerQuit(PlayerQuitEvent $event){
-		if(($camera = $this->getCamera($event->getPlayer())) !== null and $camera->isRunning()){
-			$camera->stop();
-		}
-	}
+    public function onPlayerQuit(PlayerQuitEvent $event){
+        if(($camera = $this->getCamera($event->getPlayer())) !== null and $camera->isRunning()){
+            $camera->stop();
+        }
+    }
 }
