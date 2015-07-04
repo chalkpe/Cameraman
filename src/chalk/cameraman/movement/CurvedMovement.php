@@ -18,7 +18,16 @@ class CurvedMovement extends StraightMovement {
 		parent::__construct($origin, $destination);
 	}
 
-	public function tick($slowness){
-		return parent::tick($slowness); //TODO: Change the auto-generated stub
+	/**
+	 * @param number $slowness
+	 * @param float $curve
+	 * @return Location|null
+	 */
+	public function tick($slowness, $curve = 5.0){
+		if(($location = parent::tick($slowness)) !== null){
+			$offset = $curve * sin(M_PI * ($this->current / ($this->length * $slowness)));
+			$location->setComponents($location->getX() + $offset, $location->getY(), $location->getZ() + $offset);
+		}
+		return $location;
 	}
 }
