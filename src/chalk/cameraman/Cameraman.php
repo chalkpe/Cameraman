@@ -27,9 +27,16 @@ class Cameraman extends PluginBase implements Listener {
     /** @var Cameraman */
     private static $instance = null;
 
-    /** @var Messages */
-    private $messages = null;
-    const MESSAGE_VERSION = 1;
+    /**
+     * @return Cameraman
+     */
+    public static function getInstance(){
+        return self::$instance;
+    }
+
+    /* ====================================================================================================================== *
+     *                                                    GLOBAL VARIABLES                                                    *
+     * ====================================================================================================================== */
 
     const TICKS_PER_SECOND = 10;
     const DELAY = 100;
@@ -40,25 +47,47 @@ class Cameraman extends PluginBase implements Listener {
     /** @var Camera[] */
     private $cameras = [];
 
-    /**
-     * @return Cameraman
-     */
-    public static function getInstance(){
-        return self::$instance;
-    }
+    /* ====================================================================================================================== *
+     *                                                    EVENT LISTENERS                                                     *
+     * ====================================================================================================================== */
 
     public function onLoad(){
         self::$instance = $this;
     }
 
     public function onEnable(){
-        @mkdir($this->getDataFolder());
-        $this->initMessages();
+        $this->loadConfigs();
+        $this->loadMessages();
 
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
     }
 
-    public function initMessages(){
+    public function onDisable(){
+        $this->saveConfigs();
+    }
+
+    public function onPlayerQuit(PlayerQuitEvent $event){
+        if(($camera = $this->getCamera($event->getPlayer())) !== null and $camera->isRunning()){
+            $camera->stop();
+        }
+    }
+
+    public function onDataPacketReceive(DataPacketReceiveEvent $event){
+        if($event->getPacket() instanceof MovePlayerPacket and ($camera = $this->getCamera($event->getPlayer())) !== null and $camera->isRunning()){
+            $event->setCancelled(true);
+        }
+    }
+
+    /* ====================================================================================================================== *
+     *                                                    RESOURCE CONTROL                                                    *
+     * ====================================================================================================================== */
+
+    /** @var Messages */
+    private $messages = null;
+    const MESSAGE_VERSION = 1;
+
+    public function loadMessages(){
+        @mkdir($this->getDataFolder());
         $this->updateMessages("messages.yml");
         $this->messages = new Messages((new Config($this->getDataFolder() . "messages.yml", Config::YAML))->getAll());
     }
@@ -81,6 +110,45 @@ class Cameraman extends PluginBase implements Listener {
     public function getMessages(){
         return $this->messages;
     }
+
+    public function loadConfigs(){
+        @mkdir($this->getDataFolder());
+        $config = new Config($this->getDataFolder() . "waypoint-map.json", Config::JSON);
+
+        foreach($config->getAll() as $key => $waypoints){
+            $this->waypointMap[$key] = [];
+            foreach($waypoints as $waypoint){
+                $x = floatval($waypoint["x"]); $y = floatval($waypoint["y"]); $z = floatval($waypoint["y"]);
+                $yaw = floatval($waypoint["yaw"]); $pitch = floatval($waypoint["pitch"]);
+                $level = $this->getServer()->getLevelByName($waypoint["level"]);
+
+                $this->waypointMap[$key][] = new Location($x, $y, $z, $yaw, $pitch, $level);
+            }
+        }
+    }
+
+    public function saveConfigs(){
+        $waypointMap = [];
+
+        foreach($this->getWaypointMap() as $key => $waypoints){
+            $waypointMap[$key] = [];
+            foreach($waypoints as $waypoint){
+                $waypointMap[$key][] = [
+                    "x" => $waypoint->getX(), "y" => $waypoint->getY(), "z" => $waypoint->getZ(),
+                    "yaw" => $waypoint->getYaw(), "pitch" => $waypoint->getPitch(),
+                    "level" => $waypoint->isValid() ? $waypoint->getLevel()->getName() : null
+                ];
+            }
+        }
+
+        $config = new Config($this->getDataFolder() . "waypoint-map.json", Config::JSON);
+        $config->setAll($waypointMap);
+        $config->save();
+    }
+
+    /* ====================================================================================================================== *
+     *                                                   GETTERS AND SETTERS                                                  *
+     * ====================================================================================================================== */
 
     /**
      * @return Location[][]
@@ -156,6 +224,10 @@ class Cameraman extends PluginBase implements Listener {
         return $camera;
     }
 
+    /* ====================================================================================================================== *
+     *                                                     HELPER METHODS                                                     *
+     * ====================================================================================================================== */
+
     /**
      * @param Location[] $waypoints
      * @return Movement[]
@@ -172,6 +244,28 @@ class Cameraman extends PluginBase implements Listener {
         }
         return $movements;
     }
+
+    /**
+     * @param Player $player
+     * @return bool|int
+     */
+    public static function sendMovePlayerPacket(Player $player){
+        $packet = new MovePlayerPacket();
+        $packet->eid = 0;
+        $packet->x = $player->getX();
+        $packet->y = $player->getY();
+        $packet->z = $player->getZ();
+        $packet->yaw = $player->getYaw();
+        $packet->bodyYaw = $player->getYaw();
+        $packet->pitch = $player->getPitch();
+        $packet->onGround = false;
+
+        return $player->dataPacket($packet);
+    }
+
+    /* ====================================================================================================================== *
+     *                                                     MESSAGE SENDERS                                                    *
+     * ====================================================================================================================== */
 
     /**
      * @param CommandSender $sender
@@ -263,6 +357,10 @@ class Cameraman extends PluginBase implements Listener {
 
         return true;
     }
+
+    /* ====================================================================================================================== *
+     *                                                    COMMAND HANDLERS                                                    *
+     * ====================================================================================================================== */
 
     /**
      * @param int $index
@@ -421,35 +519,5 @@ class Cameraman extends PluginBase implements Listener {
                 break;
         }
         return true;
-    }
-
-    public function onDataPacketReceive(DataPacketReceiveEvent $event){
-        if($event->getPacket() instanceof MovePlayerPacket and ($camera = $this->getCamera($event->getPlayer())) !== null and $camera->isRunning()){
-            $event->setCancelled(true);
-        }
-    }
-
-    /**
-     * @param Player $player
-     * @return bool|int
-     */
-    public static function sendMovePlayerPacket(Player $player){
-        $packet = new MovePlayerPacket();
-        $packet->eid = 0;
-        $packet->x = $player->getX();
-        $packet->y = $player->getY();
-        $packet->z = $player->getZ();
-        $packet->yaw = $player->getYaw();
-        $packet->bodyYaw = $player->getYaw();
-        $packet->pitch = $player->getPitch();
-        $packet->onGround = false;
-
-        return $player->dataPacket($packet);
-    }
-
-    public function onPlayerQuit(PlayerQuitEvent $event){
-        if(($camera = $this->getCamera($event->getPlayer())) !== null and $camera->isRunning()){
-            $camera->stop();
-        }
     }
 }
