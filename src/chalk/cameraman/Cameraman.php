@@ -266,15 +266,54 @@ class Cameraman extends PluginBase implements Listener {
     /* ====================================================================================================================== *
      *                                                     MESSAGE SENDERS                                                    *
      * ====================================================================================================================== */
+    private static $colorError = TextFormat::RESET . TextFormat::RED;
+    private static $colorLight = TextFormat::RESET . TextFormat::GREEN;
+    private static $colorDark  = TextFormat::RESET . TextFormat::DARK_GREEN;
+    private static $colorTitle = TextFormat::RESET . TextFormat::DARK_GREEN . TextFormat::BOLD;
+
+    private static $defaultPrefix = "[Cameraman] ";
+
+    private static $commands = [
+        "p", "start", "stop", "info", "goto", "clear", "help", "about"
+    ];
+
+    private static $commandMap = [
+        "1" => ["p", "start", "stop"],
+        "2" => ["info", "goto", "clear"],
+        "3" => ["help", "about"]
+    ];
 
     /**
      * @param CommandSender $sender
-     * @param string $message
-     * @param string $color
+     * @param string $key
+     * @param array $format
      * @return bool
      */
-    public function sendMessage(CommandSender $sender, $message, $color = TextFormat::GREEN){
-        $sender->sendMessage(TextFormat::BOLD . TextFormat::DARK_GREEN . "[Cameraman] " . TextFormat::RESET . $color . $message);
+    public function sendMessage(CommandSender $sender, $key, $format = []){
+        if($sender === null){
+            return false;
+        }
+
+        if($key[0] === '@'){
+            $key = substr($key, 1);
+            $prefix = Cameraman::$colorTitle;
+        }else if($key[0] === '!'){
+            $key = substr($key, 1);
+            $prefix = Cameraman::$colorDark;
+        }else if($key[0] === '?'){
+            $key = substr($key, 1);
+            $prefix = Cameraman::$colorLight;
+        }else if ($key[0] === '.'){
+            $key = substr($key, 1);
+            $prefix = Cameraman::$colorTitle . Cameraman::$defaultPrefix . Cameraman::$colorDark;
+        }else if ($key[0] === '#'){
+            $key = substr($key, 1);
+            $prefix = Cameraman::$colorTitle . Cameraman::$defaultPrefix . Cameraman::$colorError;
+        }else{
+            $prefix = Cameraman::$colorTitle . Cameraman::$defaultPrefix . Cameraman::$colorLight;
+        }
+
+        $sender->sendMessage($prefix . $this->getMessages()->getMessage($key, $format));
 
         return true;
     }
@@ -284,66 +323,58 @@ class Cameraman extends PluginBase implements Listener {
      * @return bool
      */
     public function sendAboutMessages(CommandSender $sender){
-        $sender->sendMessage(TextFormat::BOLD . TextFormat::DARK_GREEN . "[Cameraman v" . $this->getDescription()->getVersion() . "]");
-        $sender->sendMessage(TextFormat::GREEN . "Author: " . $this->getDescription()->getAuthors()[0]);
-        $sender->sendMessage(TextFormat::GREEN . "Website: " . $this->getDescription()->getWebsite());
+        $this->sendMessage($sender, "@message-about-0", ["version" => $this->getDescription()->getVersion()]);
+        $this->sendMessage($sender, "?message-about-1", ["chalkpe" => $this->getDescription()->getAuthors()[0]]);
+        $this->sendMessage($sender, "?message-about-2", ["chalkpe" => $this->getDescription()->getWebsite()]);
 
         return true;
     }
 
     /**
      * @param CommandSender $sender
-     * @param string $command
      * @return bool
      */
-    public function sendHelpMessages(CommandSender $sender, $command = "1"){
-        $command = strToLower($command);
-
-        if(is_numeric($command)){
-            $sender->sendMessage(TextFormat::BOLD . TextFormat::DARK_GREEN . "-- Showing help page " . $command . " of 3 (/cam help [page]) --");
-        }
-
-        if($command === "" or $command === "1" or $command === "p"){
-            $this->sendMessage($sender, "/cam p [index]");
-            $this->sendMessage($sender, "Adds a waypoint at the current position", TextFormat::DARK_GREEN);
-        }
-
-        if($command === "" or $command === "1" or $command === "start"){
-            $this->sendMessage($sender, "/cam start <slowness>");
-            $this->sendMessage($sender, "Travels the path in the given slowness", TextFormat::DARK_GREEN);
-        }
-
-        if($command === "" or $command === "1" or $command === "stop"){
-            $this->sendMessage($sender, "/cam stop");
-            $this->sendMessage($sender, "Interrupts travelling", TextFormat::DARK_GREEN);
-        }
-
-        if($command === "" or $command === "2" or $command === "info"){
-            $this->sendMessage($sender, "/cam info [index]");
-            $this->sendMessage($sender, "Shows the information of current waypoints", TextFormat::DARK_GREEN);
-        }
-
-        if($command === "" or $command === "2" or $command === "goto"){
-            $this->sendMessage($sender, "/cam goto <index>");
-            $this->sendMessage($sender, "Teleports to the specified waypoint", TextFormat::DARK_GREEN);
-        }
-
-        if($command === "" or $command === "2" or $command === "clear"){
-            $this->sendMessage($sender, "/cam clear [index]");
-            $this->sendMessage($sender, "Removes all or specific waypoints", TextFormat::DARK_GREEN);
-        }
-
-        if($command === "" or $command === "3" or $command === "help"){
-            $this->sendMessage($sender, "/cam help [command]");
-            $this->sendMessage($sender, "Shows the help menu of commands", TextFormat::DARK_GREEN);
-        }
-
-        if($command === "" or $command === "3" or $command === "about"){
-            $this->sendMessage($sender, "/cam about");
-            $this->sendMessage($sender, "Shows the information of this plugin", TextFormat::DARK_GREEN);
-        }
-        
+    public function sendUnknownCommandErrorMessage(CommandSender $sender){
+        $this->sendMessage($sender, "#error-unknown-command-0");
+        $this->sendMessage($sender, "#error-unknown-command-1");
         return true;
+    }
+
+    /**
+     * @param CommandSender $sender
+     * @param string $param
+     * @return bool
+     */
+    public function sendHelpMessages(CommandSender $sender, $param = "1"){
+        $param = strToLower($param);
+
+        if($param === ""){
+            foreach(Cameraman::$commands as $command){
+                $this->sendMessage($sender,  "command-" . $command . "-usage");
+                $this->sendMessage($sender, ".command-" . $command . "-description");
+            }
+            return true;
+        }
+
+        if(is_numeric($param)){
+            $this->sendMessage($sender, "@message-help", ["current" => $param, "total" => count(Cameraman::$commandMap)]);
+            if(isset(Cameraman::$commandMap[$param])){
+                foreach(Cameraman::$commandMap[$param] as $command){
+                    $this->sendMessage($sender,  "command-" . $command . "-usage");
+                    $this->sendMessage($sender, ".command-" . $command . "-description");
+                }
+            }
+            return true;
+        }
+
+        if(in_array($param, Cameraman::$commands)){
+            $this->sendMessage($sender,  "command-" . $param . "-usage");
+            $this->sendMessage($sender, ".command-" . $param . "-description");
+
+            return true;
+        }
+
+        return $this->sendUnknownCommandErrorMessage($sender);
     }
 
     /**
@@ -353,7 +384,7 @@ class Cameraman extends PluginBase implements Listener {
      * @return bool
      */
     public function sendWaypointMessage(CommandSender $sender, Vector3 $waypoint, $index){
-        $this->sendMessage($sender, "Waypoint #" . $index . " - [" . $waypoint->getFloorX() . ", " . $waypoint->getFloorY() . ", " . $waypoint->getFloorZ() . "]");
+        $this->sendMessage($sender, "message-waypoint-info", ["index" => $index, "x" => $waypoint->getFloorX(), "y" => $waypoint->getFloorY(), "z" => $waypoint->getFloorZ()]);
 
         return true;
     }
@@ -368,11 +399,9 @@ class Cameraman extends PluginBase implements Listener {
      * @param CommandSender $sender
      * @return bool
      */
-    public function isIndexOutOfBounds($index, array $array, CommandSender $sender = null){
+    public function checkIndex($index, array $array, CommandSender $sender = null){
         if($index < 1 or $index > count($array)){
-            if($sender !== null){
-                $this->sendMessage($sender, "The index is out of bounds! (total: " . count($array) . ")", TextFormat::RED);
-            }
+            $this->sendMessage($sender, "#error-index-out-of-bounds", ["total" => count($array)]);
             return true;
         }
         return false;
@@ -387,12 +416,11 @@ class Cameraman extends PluginBase implements Listener {
      */
     public function onCommand(CommandSender $sender, Command $command, $commandAlias, array $args){
         if(!$sender instanceof Player){
-            $this->sendMessage($sender, "Please issue this command in-game!", TextFormat::RED);
+            $this->sendMessage($sender, "#error-only-in-game");
             return true;
         }
 
-        if($commandAlias === "p"){
-            //shortcut for /cam p
+        if($commandAlias === "p"){ //shortcut for /cam p
             array_unshift($args, "p");
         }
 
@@ -402,8 +430,7 @@ class Cameraman extends PluginBase implements Listener {
 
         switch(strToLower($args[0])){
             default:
-                $this->sendMessage($sender, "Unknown command!", TextFormat::RED);
-                $this->sendMessage($sender, "Try " . TextFormat::BOLD . "/cam help" . TextFormat::RESET . TextFormat::RED . " for a list of commands", TextFormat::RED);
+                $this->sendUnknownCommandErrorMessage($sender);
                 break;
 
             case "help":
@@ -422,15 +449,15 @@ class Cameraman extends PluginBase implements Listener {
                 }
 
                 if(count($args) > 1 and is_numeric($args[1])){
-                    if($this->isIndexOutOfBounds($index = intval($args[1]), $waypoints, $sender)){
+                    if($this->checkIndex($index = intval($args[1]), $waypoints, $sender)){
                         return true;
                     }
 
                     $waypoints = $this->setWaypoint($sender, $sender->getLocation(), $index - 1);
-                    $this->sendMessage($sender, "Reset Waypoint #" . $index . " (total: " . count($waypoints) . ")");
+                    $this->sendMessage($sender, "message-reset-waypoint", ["index" => $index, "total" => count($waypoints)]);
                 }else{
                     $waypoints = $this->setWaypoint($sender, $sender->getLocation());
-                    $this->sendMessage($sender, "Added Waypoint #" . count($waypoints));
+                    $this->sendMessage($sender, "message-added-waypoint", ["index" => count($waypoints)]);
                 }
                 break;
 
@@ -440,16 +467,16 @@ class Cameraman extends PluginBase implements Listener {
                 }
 
                 if(($waypoints = $this->getWaypoints($sender)) === null or count($waypoints) < 2){
-                    $this->sendMessage($sender, "You should set at least two waypoints!", TextFormat::RED);
+                    $this->sendMessage($sender, "#error-too-few-waypoints");
                     return $this->sendHelpMessages($sender, "p");
                 }
 
                 if(($slowness = doubleval($args[1])) < 0.0000001){
-                    return $this->sendMessage($sender, "The slowness must be positive! (current: " . $slowness . ")", TextFormat::RED);
+                    return $this->sendMessage($sender, "#error-negative-slowness", ["slowness" => $slowness]);
                 }
 
                 if(($camera = $this->getCamera($sender)) !== null and $camera->isRunning()){
-                    $this->sendMessage($sender, "Interrupting current travels...", TextFormat::DARK_GREEN);
+                    $this->sendMessage($sender, ".message-interrupting-current-travel");
                     $camera->stop();
                 }
 
@@ -458,20 +485,20 @@ class Cameraman extends PluginBase implements Listener {
 
             case "stop":
                 if(($camera = $this->getCamera($sender)) === null or !$camera->isRunning()){
-                    return $this->sendMessage($sender, "Travels are already interrupted!", TextFormat::RED);
+                    return $this->sendMessage($sender, "#error-travels-already-interrupted");
                 }
 
                 $camera->stop(); unset($camera);
-                $this->sendMessage($sender, "Travelling has been interrupted!");
+                $this->sendMessage($sender, "message-travelling-interrupted");
                 break;
 
             case "info":
                 if(($waypoints = $this->getWaypoints($sender)) === null or count($waypoints) === 0){
-                    return $this->sendMessage($sender, "There are no waypoints to show!", TextFormat::RED);
+                    return $this->sendMessage($sender, "#error-no-waypoints-to-show");
                 }
 
                 if(count($args) > 1 and is_numeric($args[1])){
-                    if($this->isIndexOutOfBounds($index = intval($args[1]), $waypoints, $sender)){
+                    if($this->checkIndex($index = intval($args[1]), $waypoints, $sender)){
                         return true;
                     }
 
@@ -489,32 +516,32 @@ class Cameraman extends PluginBase implements Listener {
                 }
 
                 if(($waypoints = $this->getWaypoints($sender)) === null or count($waypoints) === 0){
-                    return $this->sendMessage($sender, "There are no waypoints to teleport!", TextFormat::RED);
+                    return $this->sendMessage($sender, "#error-no-waypoints-to-teleport");
                 }
 
-                if($this->isIndexOutOfBounds($index = intval($args[1]), $waypoints, $sender)){
+                if($this->checkIndex($index = intval($args[1]), $waypoints, $sender)){
                     return true;
                 }
 
                 $sender->teleport($waypoints[$index - 1]);
-                $this->sendMessage($sender, "Teleported to Waypoint #" . $index . "!");
+                $this->sendMessage($sender, "message-teleported", ["index" => $index]);
                 break;
 
             case "clear":
                 if(($waypoints = $this->getWaypoints($sender)) === null or count($waypoints) === 0){
-                    return $this->sendMessage($sender, "There are no waypoints to remove!", TextFormat::RED);
+                    return $this->sendMessage($sender, "#error-no-waypoints-to-remove");
                 }
 
                 if(count($args) > 1 and is_numeric($args[1])){
-                    if($this->isIndexOutOfBounds($index = intval($args[1]), $waypoints, $sender)){
+                    if($this->checkIndex($index = intval($args[1]), $waypoints, $sender)){
                         return true;
                     }
 
                     array_splice($waypoints, $index - 1, 1);
-                    $this->sendMessage($sender, "Waypoint #" . $index . " has been removed! (total: " . count($waypoints) . ")");
+                    $this->sendMessage($sender, "message-removed-waypoint", ["index" => $index, "total" => count($waypoints)]);
                 }else{
                     unset($waypoints);
-                    $this->sendMessage($sender, "All waypoints has been removed!");
+                    $this->sendMessage($sender, "message-all-waypoint-removed");
                 }
                 break;
         }

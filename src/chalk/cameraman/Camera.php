@@ -77,7 +77,7 @@ class Camera {
 
     public function start(){
         if(!$this->isRunning()){
-            Cameraman::getInstance()->sendMessage($this->getTarget(), "Travelling will start in a few seconds...");
+            Cameraman::getInstance()->sendMessage($this->getTarget(), "message-travelling-will-start");
 
             $this->location = $this->getTarget()->getLocation();
             $this->gamemode = $this->getTarget()->getGamemode();
@@ -85,7 +85,6 @@ class Camera {
             $this->getTarget()->setGamemode(Player::SPECTATOR);
 
             $this->taskId = Cameraman::getInstance()->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new CameraTask($this), Cameraman::DELAY, 20 / Cameraman::TICKS_PER_SECOND)->getTaskId();
-            Cameraman::getInstance()->sendMessage($this->getTarget(), "Travelling started! (slowness: " . $this->getSlowness() . ")");
         }
     }
 
@@ -96,7 +95,7 @@ class Camera {
             $this->getTarget()->teleport($this->location);
             $this->getTarget()->setGamemode($this->gamemode);
 
-            Cameraman::getInstance()->sendMessage($this->getTarget(), "Travelling finished!");
+            Cameraman::getInstance()->sendMessage($this->getTarget(), "message-travelling-finished");
         }
     }
 }

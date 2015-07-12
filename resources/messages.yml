@@ -70,13 +70,69 @@ messages:
     eng: "-- Showing help page {%current} of {%total} (/cam help [page]) --"
     kor: "-- 총 {%total}개 페이지 중 {%current}번째 페이지 (/cam help [page]) --"
 
+  message-about-0:
+    eng: "[Cameraman v{%version}]"
+    kor: "[Cameraman v{%version}]"
+
+  message-about-1:
+    eng: "Author: {%chalkpe}"
+    kor: "개발자: {%chalkpe}"
+
+  message-about-2:
+    eng: "Website: {%chalkpe}"
+    kor: "웹사이트: {%chalkpe}"
+
+  message-reset-waypoint:
+    eng: "Reset Waypoint #{%index} (total: {%total})"
+    kor: "{%index}번 웨이포인트를 재설정했습니다 (총 {%total}개)"
+
+  message-added-waypoint:
+    eng: "Added Waypoint #{%index}"
+    kor: "{%index}번 웨이포인트를 설정했습니다"
+
+  message-interrupting-current-travel:
+    eng: "Interrupting current travels..."
+    kor: "기존의 여행을 중지하는 중입니다..."
+
+  message-travelling-interrupted:
+    eng: "Travelling has been interrupted!"
+    kor: "여행이 중지되었습니다!"
+
+  message-teleported:
+    eng: "Teleported to Waypoint #{%index}!"
+    kor: "{%index}번 웨이포인트로 순간이동했습니다!"
+
+  message-removed-waypoint:
+    eng: "Waypoint #{%index} has been removed! (total: {%total})"
+    kor: "{%index}번 웨이포인트가 제거되었습니다! (총 {%total}개)"
+
+  message-all-waypoint-removed:
+    eng: "All waypoints has been removed!"
+    kor: "모든 웨이포인트가 제거되었습니다!"
+
+  message-waypoint-info:
+    eng: "Waypoint #{%index} - [{%x}, {%y}, {%z}]"
+    kor: "{%index}번 웨이포인트 - [{%x}, {%y}, {%z}]"
+
+  message-travelling-will-start:
+    eng: "Travelling will start in a few seconds..."
+    kor: "몇 초 내로 여행이 시작됩니다..."
+
+  message-travelling-started:
+    eng: "Travelling started! (slowness: {%slowness})"
+    kor: "여행이 시작되었습니다! (느린 정도: {%slowness})"
+
+  message-travelling-finished:
+    eng: "Travelling finished!"
+    kor: "여행이 끝났습니다!"
+
   error-unknown-command-0:
     eng: "Unknown command!"
     kor: "알 수 없는 명령어입니다!"
 
   error-unknown-command-1:
-    eng: "Try §l/cam help§r§c for a list of commands"
-    kor: "§l/cam help§r§c을 입력해 명령어 목록을 확인해 보세요"
+    eng: "Try \"/cam help\" for a list of commands"
+    kor: "\"/cam help\"를 입력해 명령어 목록을 확인해 보세요"
 
   error-only-in-game:
     eng: "Please issue this command in-game!"
