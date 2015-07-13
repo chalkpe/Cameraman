@@ -16,7 +16,7 @@ class CameraTask extends PluginTask {
     private $camera;
 
     /** @var int */
-    private $index = 0;
+    private $index = -1;
 
     function __construct(Camera $camera){
         parent::__construct(Cameraman::getInstance());
@@ -27,8 +27,9 @@ class CameraTask extends PluginTask {
      * @param $currentTick
      */
     public function onRun($currentTick){
-        if($this->index === 0){
+        if($this->index < 0){
             Cameraman::getInstance()->sendMessage($this->getCamera()->getTarget(), "message-travelling-started", ["slowness" => $this->getCamera()->getSlowness()]);
+            $this->index = 0;
         }
 
         if($this->index >= count($this->getCamera()->getMovements())){

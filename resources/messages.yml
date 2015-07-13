@@ -70,17 +70,9 @@ messages:
     eng: "-- Showing help page {%current} of {%total} (/cam help [page]) --"
     kor: "-- 총 {%total}개 페이지 중 {%current}번째 페이지 (/cam help [page]) --"
 
-  message-about-0:
-    eng: "[Cameraman v{%version}]"
-    kor: "[Cameraman v{%version}]"
-
-  message-about-1:
-    eng: "Author: {%chalkpe}"
-    kor: "개발자: {%chalkpe}"
-
-  message-about-2:
-    eng: "Website: {%chalkpe}"
-    kor: "웹사이트: {%chalkpe}"
+  message-about:
+    eng: "Cameraman v{%version} by {%chalkpe} - {%website}"
+    kor: "Cameraman v{%version} by {%chalkpe} - {%website}"
 
   message-reset-waypoint:
     eng: "Reset Waypoint #{%index} (total: {%total})"

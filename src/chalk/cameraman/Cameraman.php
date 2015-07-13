@@ -270,6 +270,7 @@ class Cameraman extends PluginBase implements Listener {
     private static $colorLight = TextFormat::RESET . TextFormat::GREEN;
     private static $colorDark  = TextFormat::RESET . TextFormat::DARK_GREEN;
     private static $colorTitle = TextFormat::RESET . TextFormat::DARK_GREEN . TextFormat::BOLD;
+    private static $colorTITLE = TextFormat::RESET . TextFormat::RED        . TextFormat::BOLD;
 
     private static $defaultPrefix = "[Cameraman] ";
 
@@ -308,13 +309,12 @@ class Cameraman extends PluginBase implements Listener {
             $prefix = Cameraman::$colorTitle . Cameraman::$defaultPrefix . Cameraman::$colorDark;
         }else if ($key[0] === '#'){
             $key = substr($key, 1);
-            $prefix = Cameraman::$colorTitle . Cameraman::$defaultPrefix . Cameraman::$colorError;
+            $prefix = Cameraman::$colorTITLE . Cameraman::$defaultPrefix . Cameraman::$colorError;
         }else{
             $prefix = Cameraman::$colorTitle . Cameraman::$defaultPrefix . Cameraman::$colorLight;
         }
 
         $sender->sendMessage($prefix . $this->getMessages()->getMessage($key, $format));
-
         return true;
     }
 
@@ -323,10 +323,7 @@ class Cameraman extends PluginBase implements Listener {
      * @return bool
      */
     public function sendAboutMessages(CommandSender $sender){
-        $this->sendMessage($sender, "@message-about-0", ["version" => $this->getDescription()->getVersion()]);
-        $this->sendMessage($sender, "?message-about-1", ["chalkpe" => $this->getDescription()->getAuthors()[0]]);
-        $this->sendMessage($sender, "?message-about-2", ["chalkpe" => $this->getDescription()->getWebsite()]);
-
+        $this->sendMessage($sender, "@message-about", ["version" => $this->getDescription()->getVersion(), "chalkpe" => $this->getDescription()->getAuthors()[0], "website" => $this->getDescription()->getWebsite()]);
         return true;
     }
 
