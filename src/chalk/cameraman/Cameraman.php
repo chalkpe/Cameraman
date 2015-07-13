@@ -266,13 +266,12 @@ class Cameraman extends PluginBase implements Listener {
     /* ====================================================================================================================== *
      *                                                     MESSAGE SENDERS                                                    *
      * ====================================================================================================================== */
+
     private static $colorError = TextFormat::RESET . TextFormat::RED;
     private static $colorLight = TextFormat::RESET . TextFormat::GREEN;
     private static $colorDark  = TextFormat::RESET . TextFormat::DARK_GREEN;
     private static $colorTitle = TextFormat::RESET . TextFormat::DARK_GREEN . TextFormat::BOLD;
     private static $colorTITLE = TextFormat::RESET . TextFormat::RED        . TextFormat::BOLD;
-
-    private static $defaultPrefix = "[Cameraman] ";
 
     private static $commands = [
         "p", "start", "stop", "info", "goto", "clear", "help", "about"
@@ -306,12 +305,12 @@ class Cameraman extends PluginBase implements Listener {
             $prefix = Cameraman::$colorLight;
         }else if ($key[0] === '.'){
             $key = substr($key, 1);
-            $prefix = Cameraman::$colorTitle . Cameraman::$defaultPrefix . Cameraman::$colorDark;
+            $prefix = Cameraman::$colorTitle . $this->getMessages()->getMessage("prefix") . Cameraman::$colorDark;
         }else if ($key[0] === '#'){
             $key = substr($key, 1);
-            $prefix = Cameraman::$colorTITLE . Cameraman::$defaultPrefix . Cameraman::$colorError;
+            $prefix = Cameraman::$colorTITLE . $this->getMessages()->getMessage("prefix") . Cameraman::$colorError;
         }else{
-            $prefix = Cameraman::$colorTitle . Cameraman::$defaultPrefix . Cameraman::$colorLight;
+            $prefix = Cameraman::$colorTitle . $this->getMessages()->getMessage("prefix") . Cameraman::$colorLight;
         }
 
         $sender->sendMessage($prefix . $this->getMessages()->getMessage($key, $format));

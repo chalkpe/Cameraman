@@ -2,6 +2,10 @@ version: 1
 default-language: "eng"
 
 messages:
+  prefix:
+    eng: "[Cameraman] "
+    kor: "[카메라맨] "
+
   command-p-usage:
     eng: "/cam p [index]"
     kor: "/cam p [번호]"
@@ -72,7 +76,7 @@ messages:
 
   message-about:
     eng: "Cameraman v{%version} by {%chalkpe} - {%website}"
-    kor: "Cameraman v{%version} by {%chalkpe} - {%website}"
+    kor: "카메라맨 v{%version} by {%chalkpe} - {%website}"
 
   message-reset-waypoint:
     eng: "Reset Waypoint #{%index} (total: {%total})"
