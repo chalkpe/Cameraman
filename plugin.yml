@@ -2,7 +2,11 @@ name: Cameraman
 main: chalk\cameraman\Cameraman
 version: "1.0"
 author: ChalkPE
-api: [1.12.0]
+api:
+- 1.12.0
+- 1.13.0
+- 2.0.0
+
 website: http://chalk.pe
 
 permissions:
