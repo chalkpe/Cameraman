@@ -26,6 +26,7 @@ namespace chalk\cameraman;
 
 use chalk\cameraman\movement\Movement;
 use chalk\cameraman\movement\StraightMovement;
+use chalk\cameraman\task\AutoSaveTask;
 use chalk\utils\Messages;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
@@ -77,6 +78,7 @@ class Cameraman extends PluginBase implements Listener {
         $this->loadMessages();
 
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
+        $this->getServer()->getScheduler()->scheduleRepeatingTask(new AutoSaveTask(), 20 * 60 * 15); //15m
     }
 
     public function onDisable(){
@@ -148,6 +150,8 @@ class Cameraman extends PluginBase implements Listener {
         $waypointMap = [];
 
         foreach($this->getWaypointMap() as $key => $waypoints){
+            if($key === null) continue;
+
             $waypointMap[$key] = [];
             foreach($waypoints as $waypoint){
                 $waypointMap[$key][] = [
@@ -553,9 +557,10 @@ class Cameraman extends PluginBase implements Listener {
                     array_splice($waypoints, $index - 1, 1);
                     $this->sendMessage($sender, "message-removed-waypoint", ["index" => $index, "total" => count($waypoints)]);
                 }else{
-                    unset($waypoints);
+                    $waypoints = [];
                     $this->sendMessage($sender, "message-all-waypoint-removed");
                 }
+                $this->setWaypoints($sender, $waypoints);
                 break;
         }
         return true;
